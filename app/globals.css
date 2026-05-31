@@ -130,3 +130,27 @@
     @apply font-sans;
     }
 }
+
+
+@keyframes scaleInOut {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+
+.animate-scale {
+  animation: scaleInOut 0.3s ease-in-out infinite;
+}
+
+
+
+@keyframes walkThrough {
+  0%   { transform: translateX(-500)}
+  45%  { transform: translateX(0px)    }
+  75%  { transform: translateX(0px)    }
+  100% { transform: translateX(500) }
+}
+
+.animate-walk {
+  animation: walkThrough 10s ease-in-out infinite !important;
+}
+
