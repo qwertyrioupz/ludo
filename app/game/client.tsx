@@ -38,6 +38,9 @@ import FourTriangles from "@/components/four-triangles"
 import Dice from "@/components/dice"
 import { Colors } from "@/lib/Colors"
 import { LayoutGroup } from "framer-motion"
+import { useLocalBots } from "@/hooks/useLocalBots"
+import { useTurnCountdown } from "@/hooks/useTurnCountdown"
+import TurnTimer from "@/components/turn-timer"
 
 const WinDialog = ({ winner }: { winner: number | null }) => {
   const resetGame = useGameStore((s) => s.resetGame)
@@ -105,6 +108,8 @@ const WinDialog = ({ winner }: { winner: number | null }) => {
 }
 
 export default function Client() {
+  useLocalBots()
+  useTurnCountdown()
   const [isOpen, setIsOpen] = useState(false)
   const [showStartOverlay, setShowStartOverlay] = useState(true)
   const router = useRouter()
@@ -152,6 +157,11 @@ export default function Client() {
       }}
       className="relative flex flex-col items-center justify-center"
     >
+
+      <TurnTimer />
+
+
+
       {/* Start overlay */}
       {showStartOverlay && (
         <div

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { initialState } from "./initialState"
+import { createInitialState, initialState } from "./initialState"
 import { GameState } from "./types"
 
 interface GameActions {
@@ -19,6 +19,13 @@ interface GameActions {
   enableCellSelection: (playerNo: number) => void
   updateFireworks: (value: boolean) => void
   announceWinner: (playerNo: number) => void
+
+
+
+
+  setRollingPlayerNo: (playerNo: number | null) => void
+  setBotPlaying: (value: boolean) => void
+  setTurnTimeLeft: (seconds: number) => void
 }
 
 export const useGameStore = create<GameState & GameActions>()(
@@ -26,7 +33,7 @@ export const useGameStore = create<GameState & GameActions>()(
     (set) => ({
       ...initialState,
 
-      resetGame: () => set(initialState),
+      resetGame: () => set(createInitialState()),
 
       updateDiceNo: (diceNo) => set({ diceNo, isDiceRolled: true }),
 
@@ -69,6 +76,16 @@ export const useGameStore = create<GameState & GameActions>()(
       updateFireworks: (fireworks) => set({ fireworks }),
 
       announceWinner: (winner) => set({ winner }),
+
+
+
+      setRollingPlayerNo: (rollingPlayerNo) => set({ rollingPlayerNo }),
+
+      setBotPlaying: (isBotPlaying) => set({ isBotPlaying }),
+      
+      setTurnTimeLeft: (turnTimeLeft) => set({ turnTimeLeft }),
+    
+    
     }),
     {
       name: "game-storage",

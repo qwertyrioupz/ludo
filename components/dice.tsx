@@ -1,15 +1,18 @@
 // components/Dice.tsx
 "use client"
 
-import React, { memo, useEffect, useRef, useState } from "react"
-import { useGameStore } from "@/store/useGameStore"
-
-import { playSound } from "@/lib/SoundUtility"
 import AnimationPlayer from "@/components/animation"
-import diceRollAnimation from "@/public/animation/diceroll.json"
-import Image from "next/image"
-import { selectCurrentPlayerChance, selectDiceNo, selectDiceRolled } from "@/store/gameSelectors"
 import { Colors } from "@/lib/Colors"
+import { playSound } from "@/lib/SoundUtility"
+import diceRollAnimation from "@/public/animation/diceroll.json"
+import {
+  selectCurrentPlayerChance,
+  selectDiceNo,
+  selectDiceRolled,
+} from "@/store/gameSelectors"
+import { useGameStore } from "@/store/useGameStore"
+import Image from "next/image"
+import { memo, useEffect, useRef } from "react"
 
 interface Piece {
   id: string
@@ -28,8 +31,6 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const getDiceImage = (diceNo: number): string => `/images/dice/${diceNo}.png`
 
-
-
 const getPileImage = (color: string): string => {
   switch (color) {
     case Colors.blue:
@@ -46,48 +47,86 @@ const getPileImage = (color: string): string => {
 }
 
 const Dice = memo(({ color, rotate, player, data }: DiceProps) => {
+  
+
+  
+  
+  
   const currentPlayerChance = useGameStore(selectCurrentPlayerChance)
-  const isDiceRolled         = useGameStore(selectDiceRolled)
-  const diceNo               = useGameStore(selectDiceNo)
-  const playerKey            = `player${currentPlayerChance}` as "player1" | "player2" | "player3" | "player4"
-  const playerPieces         = useGameStore((s) => s[playerKey])
+  const isDiceRolled = useGameStore(selectDiceRolled)
+  const diceNo = useGameStore(selectDiceNo)
 
-  const {
-    updateDiceNo,
-    updatePlayerChance,
-    enablePileSelection,
-    enableCellSelection,
-  } = useGameStore()
+  const humanPlayerNo = useGameStore((s) => s.humanPlayerNo)
+  const rollingPlayerNo = useGameStore((s) => s.rollingPlayerNo)
+  const isBotPlaying = useGameStore((s) => s.isBotPlaying)
 
-  const [diceRolling, setDiceRolling] = useState(false)
+  const updateDiceNo = useGameStore((s) => s.updateDiceNo)
+  const updatePlayerChance = useGameStore((s) => s.updatePlayerChance)
+  const enablePileSelection = useGameStore((s) => s.enablePileSelection)
+  const enableCellSelection = useGameStore((s) => s.enableCellSelection)
+  const setRollingPlayerNo = useGameStore((s) => s.setRollingPlayerNo)
+
+  const playerKey = `player${currentPlayerChance}` as
+    | "player1"
+    | "player2"
+    | "player3"
+    | "player4"
+
+  const playerPieces = useGameStore((s) => s[playerKey])
+
+  const isMyTurn = currentPlayerChance === player
+  const isRolling = rollingPlayerNo === player
+
+  const canClickDice =
+    isMyTurn &&
+    player === humanPlayerNo &&
+    !isDiceRolled &&
+    !isBotPlaying &&
+    !isRolling
+
   const arrowRef = useRef<HTMLDivElement>(null)
-  const animRef  = useRef<number>(null)
-  const posRef   = useRef(0)
-  const dirRef   = useRef(1)
+  const animRef = useRef<number | null>(null)
+  const posRef = useRef(0)
+  const dirRef = useRef(1)
 
-  // Arrow bounce animation
   useEffect(() => {
     const animate = () => {
       posRef.current += dirRef.current * 0.5
-      if (posRef.current > 10 || posRef.current < -10) dirRef.current *= -1
+
+      if (posRef.current > 10 || posRef.current < -10) {
+        dirRef.current *= -1
+      }
+
       if (arrowRef.current) {
         arrowRef.current.style.transform = `translateX(${posRef.current}px)`
       }
+
       animRef.current = requestAnimationFrame(animate)
     }
+
     animRef.current = requestAnimationFrame(animate)
-    return () => { if (animRef.current) cancelAnimationFrame(animRef.current) }
+
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current)
+    }
   }, [currentPlayerChance, isDiceRolled])
 
   const handleDicePress = async () => {
+    if (!canClickDice) return
+
     const newDiceNo = Math.floor(Math.random() * 6) + 1
+
     playSound("dice_roll")
-    setDiceRolling(true)
+
+    setRollingPlayerNo(player)
     await delay(800)
     updateDiceNo(newDiceNo)
-    setDiceRolling(false)
+    setRollingPlayerNo(null)
 
-    const isAnyPieceAlive  = data?.findIndex((i) => i.pos !== 0 && i.pos !== 57)
+    const isAnyPieceAlive = data?.findIndex(
+      (i) => i.pos !== 0 && i.pos !== 57
+    )
+
     const isAnyPieceLocked = data?.findIndex((i) => i.pos === 0)
 
     if (isAnyPieceAlive === -1) {
@@ -96,32 +135,35 @@ const Dice = memo(({ color, rotate, player, data }: DiceProps) => {
       } else {
         let chancePlayer = player + 1
         if (chancePlayer > 4) chancePlayer = 1
+
         await delay(600)
         updatePlayerChance(chancePlayer)
       }
-    } else {
-      const canMove = playerPieces.some(
-        (pile) => pile.travelCount + newDiceNo <= 57 && pile.pos !== 0
-      )
 
-      if (
-        (!canMove && newDiceNo === 6 && isAnyPieceLocked === -1) ||
-        (!canMove && newDiceNo !== 6 && isAnyPieceLocked !== -1) ||
-        (!canMove && newDiceNo !== 6 && isAnyPieceLocked === -1)
-      ) {
-        let chancePlayer = player + 1
-        if (chancePlayer > 4) chancePlayer = 1
-        await delay(600)
-        updatePlayerChance(chancePlayer)
-        return
-      }
-
-      if (newDiceNo === 6) enablePileSelection(player)
-      enableCellSelection(player)
+      return
     }
-  }
 
-  const isMyTurn = currentPlayerChance === player
+    const canMove = playerPieces.some(
+      (pile) => pile.travelCount + newDiceNo <= 57 && pile.pos !== 0
+    )
+
+    if (
+      (!canMove && newDiceNo === 6 && isAnyPieceLocked === -1) ||
+      (!canMove && newDiceNo !== 6 && isAnyPieceLocked !== -1) ||
+      (!canMove && newDiceNo !== 6 && isAnyPieceLocked === -1)
+    ) {
+      let chancePlayer = player + 1
+      if (chancePlayer > 4) chancePlayer = 1
+
+      await delay(600)
+      updatePlayerChance(chancePlayer)
+      return
+    }
+
+    if (newDiceNo === 6) enablePileSelection(player)
+
+    enableCellSelection(player)
+  }
 
   return (
     <div
@@ -145,14 +187,13 @@ const Dice = memo(({ color, rotate, player, data }: DiceProps) => {
             alt="pile"
             width={35}
             height={35}
+            draggable={false}
           />
         </div>
       </div>
 
       {/* Dice block */}
-      <div
-        className="border-3 border-[#f0ce2c] rounded-none"
-      >
+      <div className="border-3 rounded-none border-[#f0ce2c]">
         <div
           style={{
             background: "linear-gradient(to right, #aac8ab, #aac8ab)",
@@ -174,9 +215,10 @@ const Dice = memo(({ color, rotate, player, data }: DiceProps) => {
               paddingRight: 8,
             }}
           >
-            {isMyTurn && !diceRolling && (
+            {canClickDice ? (
               <button
-                disabled={isDiceRolled}
+                type="button"
+                disabled={!canClickDice}
                 onClick={handleDicePress}
                 className="flex items-center justify-center disabled:opacity-50"
               >
@@ -185,24 +227,50 @@ const Dice = memo(({ color, rotate, player, data }: DiceProps) => {
                   alt={`dice-${diceNo}`}
                   width={45}
                   height={45}
+                  draggable={false}
                 />
               </button>
+            ) : (
+              !isRolling && (
+                <Image
+                  src={getDiceImage(diceNo)}
+                  alt={`dice-${diceNo}`}
+                  width={45}
+                  height={45}
+                  draggable={false}
+                />
+              )
             )}
           </div>
         </div>
       </div>
 
-      {/* Arrow bounce */}
-      {isMyTurn && !isDiceRolled && (
+
+
+      {/* Arrow bounce only for human turn */}
+      {canClickDice && (
         <div ref={arrowRef}>
-          <Image src="/images/arrow.png" alt="arrow" width={50} height={30} />
+          <Image
+            src="/images/arrow.png"
+            alt="arrow"
+            width={50}
+            height={30}
+            draggable={false}
+          />
         </div>
       )}
 
-      {/* Dice rolling animation */}
-      {isMyTurn && diceRolling && (
-        <div className="absolute -top-[25px]" style={{ width: 80, height: 80 }}>
-          <AnimationPlayer animationData={diceRollAnimation} loop={false} className="h-full w-full" />
+      {/* Dice rolling animation for human and bots */}
+      {isRolling && (
+        <div
+          className="pointer-events-none absolute -top-[25px] z-[9999]"
+          style={{ width: 80, height: 80 }}
+        >
+          <AnimationPlayer
+            animationData={diceRollAnimation}
+            loop={false}
+            className="h-full w-full"
+          />
         </div>
       )}
     </div>
@@ -210,4 +278,5 @@ const Dice = memo(({ color, rotate, player, data }: DiceProps) => {
 })
 
 Dice.displayName = "Dice"
+
 export default Dice

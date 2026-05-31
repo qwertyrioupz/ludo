@@ -14,6 +14,23 @@ export interface GameState {
   player2: Piece[]
   player3: Piece[]
   player4: Piece[]
+
+
+
+
+  humanPlayerNo: number
+  rollingPlayerNo: number | null
+  isBotPlaying: boolean
+  turnTimeLeft: number
+
+
+
+
+
+
+
+
+
   chancePlayer: number
   diceNo: number
   isDiceRolled: boolean

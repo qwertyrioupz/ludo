@@ -97,6 +97,7 @@ export default function Client() {
       className="relative flex flex-col items-center justify-start gap-16 py-16"
     >
       <Image
+      loading="eager"
         src={"/images/logo.png"}
         alt="logo"
         width={512}

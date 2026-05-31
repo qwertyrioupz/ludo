@@ -14,3 +14,7 @@ export const selectPileSelection = () => useGameStore.getState().pileSelectionPl
 export const selectCellSelection = () => useGameStore.getState().cellSelectionPlayer
 export const selectDiceTouch = () => useGameStore.getState().touchDiceBlock
 export const selectFireworks = () => useGameStore.getState().fireworks
+
+export const selectHumanPlayerNo = () => useGameStore.getState().humanPlayerNo
+export const selectRollingPlayerNo = () => useGameStore.getState().rollingPlayerNo
+export const selectIsBotPlaying = () => useGameStore.getState().isBotPlaying

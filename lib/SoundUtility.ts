@@ -13,6 +13,7 @@ export type SoundName =
   | 'girl1'
   | 'girl2'
   | 'girl3'
+  | 'danger'
 
 const soundMap: Record<SoundName, string> = {
   dice_roll: '/sfx/dice_roll.mp3',
@@ -27,6 +28,7 @@ const soundMap: Record<SoundName, string> = {
   girl1: '/sfx/girl1.mp3',
   girl2: '/sfx/girl2.mp3',
   girl3: '/sfx/girl3.mp3',
+  danger: '/sfx/danger.mp3',
 }
 
 // ✅ Track all active sounds by name
