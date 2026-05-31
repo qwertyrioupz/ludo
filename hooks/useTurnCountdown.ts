@@ -46,7 +46,7 @@ export const useTurnCountdown = () => {
 
       const nextTime = Math.max(0, state.turnTimeLeft - 1)
 
-      const dangerSeconds = [4, 2]
+      const dangerSeconds = [5, 2]
 
       if (
         dangerSeconds.includes(nextTime) &&

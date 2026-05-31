@@ -76,13 +76,21 @@ export default function Client() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    playSound("home", true)
+
+    return () => {
+      stopAllSounds()
+    }
+  }, [])
+
+  useEffect(() => {
     const prepare = async () => {
       await new Promise((resolve) => setTimeout(resolve, 2000))
       setIsLoading(false)
     }
 
     prepare()
-  })
+  }, [])
 
   return (
     <div
@@ -97,7 +105,7 @@ export default function Client() {
       className="relative flex flex-col items-center justify-start gap-16 py-16"
     >
       <Image
-      loading="eager"
+        loading="eager"
         src={"/images/logo.png"}
         alt="logo"
         width={512}
