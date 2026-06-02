@@ -40,7 +40,7 @@ const PlayerPieces = memo(
   ({ player, style, pieceColor, translate }: PlayerPiecesProps) => {
     return (
       <div
-        className="absolute z-[99999] flex h-[34px] w-[34px] items-center justify-center overflow-visible"
+        className="absolute z-[99998] flex h-[34px] w-[34px] items-center justify-center overflow-visible"
         style={style}
       >
         {player.map((piece, index) => (

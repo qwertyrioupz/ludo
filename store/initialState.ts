@@ -1,9 +1,26 @@
+import { TURN_SECONDS } from "@/lib/consts"
 import { GameState } from "./types"
 
 const randomHumanPlayerNo = () => Math.floor(Math.random() * 4) + 1
 
 export const createInitialState = (): GameState => {
   const humanPlayerNo = randomHumanPlayerNo()
+
+  const userWinChanceGame = Math.random() < 0.2
+
+  const gameBalance = userWinChanceGame
+    ? {
+        userWinChanceGame: true,
+        botSmartMoveChance: 0.6,
+        botSmartDiceChance: 0.15,
+        humanTimeoutBadMoveChance: 0.6,
+      }
+    : {
+        userWinChanceGame: false,
+        botSmartMoveChance: 0.85,
+        botSmartDiceChance: 0.4,
+        humanTimeoutBadMoveChance: 0.95,
+      }
 
   return {
     player1: [
@@ -35,7 +52,8 @@ export const createInitialState = (): GameState => {
     humanPlayerNo,
     rollingPlayerNo: null,
     isBotPlaying: false,
-    turnTimeLeft: 15,
+    turnTimeLeft: TURN_SECONDS,
+    gameBalance,
 
     // blue always starts
     chancePlayer: 1,

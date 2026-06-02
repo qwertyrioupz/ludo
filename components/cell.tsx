@@ -183,7 +183,7 @@ const Cell = memo(({ id, color }: CellProps) => {
     >
       {/* Star background */}
       {isStarSpot && (
-        <span className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center text-[22px] text-black/20">
+        <span className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center text-[22px] text-black">
           ★
         </span>
       )}
@@ -191,11 +191,11 @@ const Cell = memo(({ id, color }: CellProps) => {
       {/* Arrow background */}
       {isArrowSpot && (
         <span
-          className={`pointer-events-none absolute inset-0 z-0 flex items-center justify-center text-[20px] text-black/35 ${getArrowRotation(
+          className={`pointer-events-none absolute inset-0 z-0 flex items-center justify-center text-[20px] text-black ${getArrowRotation(
             id
           )}`}
         >
-          ➤
+          🡆
         </span>
       )}
 

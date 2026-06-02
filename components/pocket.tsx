@@ -41,7 +41,7 @@ const Plot = ({ pieceNo, player, color, data, handlePress }: PlotProps) => {
       {data && data[pieceNo]?.pos === 0 && (
         <motion.div
           layoutId={`pile-${data[pieceNo].id}`}
-          className="relative z-[99999] flex h-full w-full items-center justify-center overflow-visible"
+          className="relative z-[99998] flex h-full w-full items-center justify-center overflow-visible"
           transition={{
             type: "spring",
             stiffness: 260,

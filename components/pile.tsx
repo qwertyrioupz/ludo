@@ -79,7 +79,7 @@ const Pile = ({ cell, pieceId, color, player, onPress }: PileProps) => {
     >
       <div className="relative flex aspect-square h-[75%] max-h-[34px] min-h-[20px] items-center justify-center overflow-visible">
         {canPress && (
-          <div className="pointer-events-none absolute inset-0 rounded-full border-2 border-dashed border-gray-600 animate-spin" />
+          <div className="pointer-events-none absolute inset-0 rounded-full m-0.25 border-2 border-dashed border-red-900 animate-spin" />
         )}
 
         <Image
@@ -89,7 +89,7 @@ const Pile = ({ cell, pieceId, color, player, onPress }: PileProps) => {
           height={65}
           className={`relative z-[99999] h-full w-full object-contain ${
             cell
-              ? "scale-[1.15] -translate-y-[4px]"
+              ? "scale-[1.35] -translate-y-[8px]"
               : "scale-[1.35] -translate-y-[8px]"
           }`}
           draggable={false}

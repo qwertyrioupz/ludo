@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react"
 import { useGameStore } from "@/store/useGameStore"
 import { playSound } from "@/lib/SoundUtility"
+import { TURN_SECONDS } from "@/lib/consts"
 
-const TURN_SECONDS = 15
+
 
 export const useTurnCountdown = () => {
   const chancePlayer = useGameStore((s) => s.chancePlayer)

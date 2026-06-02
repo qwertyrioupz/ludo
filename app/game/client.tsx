@@ -41,6 +41,8 @@ import { LayoutGroup } from "framer-motion"
 import { useLocalBots } from "@/hooks/useLocalBots"
 import { useTurnCountdown } from "@/hooks/useTurnCountdown"
 import TurnTimer from "@/components/turn-timer"
+import { useHumanTimeout } from "@/hooks/useHumanTimeout"
+import GameDebugPanel from "@/components/game-debug-panel"
 
 const WinDialog = ({ winner }: { winner: number | null }) => {
   const resetGame = useGameStore((s) => s.resetGame)
@@ -110,6 +112,7 @@ const WinDialog = ({ winner }: { winner: number | null }) => {
 export default function Client() {
   useLocalBots()
   useTurnCountdown()
+  useHumanTimeout()
   const [isOpen, setIsOpen] = useState(false)
   const [showStartOverlay, setShowStartOverlay] = useState(true)
   const router = useRouter()
@@ -158,6 +161,8 @@ export default function Client() {
       className="relative flex flex-col items-center justify-center"
     >
 
+      <GameDebugPanel />
+
       <TurnTimer />
 
 
@@ -189,11 +194,9 @@ export default function Client() {
       <Dialog open={isOpen} onOpenChange={handleMenuPress}>
         <DialogTrigger>
           <div
-            className="rounded-lg shadow-xl"
+            className="rounded-lg shadow-xl absolute top-2 left-2 w-full h-full"
             style={{
-              position: "absolute",
-              top: 60,
-              left: 20,
+             
               width: "30px",
               height: "30px",
               backgroundImage: "url('/images/menu.png')",
@@ -203,7 +206,7 @@ export default function Client() {
             }}
           />
         </DialogTrigger>
-        <DialogContent className="bg-transparent p-10 [&>button:last-child]:hidden">
+        <DialogContent className="bg-blue-900 z-[9999] p-10 [&>button:last-child]:hidden w-full h-[90%]">
           <DialogTitle />
           <button
             onClick={() => setIsOpen(false)}
@@ -238,10 +241,10 @@ export default function Client() {
       </Dialog>
 
       {/* ─── MAIN BOARD LAYOUT ─── */}
-      <div className="flex w-full flex-col items-center justify-center px-4">
+      <div className="flex w-full flex-col items-center justify-center">
         {/* Top row — Dice for player 2 and 3 */}
         <div
-          className="relative z-[9999] flex w-full flex-row items-center justify-between px-8 py-2"
+          className="relative z-[9999] flex w-full flex-row items-center justify-between py-2"
           style={{ pointerEvents: isDiceTouch ? "none" : "auto" }}
         >
           <Dice color={Colors.red} player={2} data={player2} />
@@ -298,7 +301,7 @@ export default function Client() {
 
         {/* Bottom row — Dice for player 1 and 4 */}
         <div
-          className="relative z-[9999] flex w-full flex-row items-center justify-between px-8 py-2"
+          className="relative z-[9999] flex w-full flex-row items-center justify-between py-2"
           style={{ pointerEvents: isDiceTouch ? "none" : "auto" }}
         >
           <Dice color={Colors.blue} player={1} data={player1} />

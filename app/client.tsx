@@ -12,17 +12,11 @@ import { useGameStore } from "@/store/useGameStore"
 import { useRouter } from "next/navigation"
 import girlAnimation from "../public/animation/witch.json"
 
-
-
-
-
-
 const ButtonsBlock = () => {
   const router = useRouter()
 
   const currentPosition = selectCurrentPositions()
   const resetGame = useGameStore((s) => s.resetGame)
-
 
   const startGame = async (isNew = false) => {
     stopAllSounds()
@@ -110,7 +104,7 @@ export default function Client() {
         alt="logo"
         width={512}
         height={512}
-        className="animate-scale max-w-96"
+        className="animate-scale max-w-48"
       />
 
       {isLoading ? (
@@ -129,7 +123,7 @@ export default function Client() {
         className="animate-walk"
       >
         <AnimationPlayer
-          className="max-w-60 scale-x-[-1] -rotate-20"
+          className="max-w-40 scale-x-[-1] -rotate-20"
           animationData={girlAnimation}
         />
       </div>
